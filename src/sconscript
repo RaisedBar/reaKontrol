@@ -6,6 +6,7 @@
 
 Import("env")
 env.Append(CPPPATH="#include")
+import platform
 
 sources = [
 	"main.cpp",

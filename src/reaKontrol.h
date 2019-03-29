@@ -8,7 +8,9 @@
 
 #pragma once
 
+#ifdef _WIN32
 #include <windows.h>
+#endif
 
 #define REAPERAPI_MINIMAL
 #define REAPERAPI_WANT_GetNumMIDIInputs

@@ -6,8 +6,8 @@
  * License: GNU General Public License version 2.0
  */
 
-#include <windows.h>
 #ifdef _WIN32
+#include <windows.h>
 #include <SetupAPI.h>
 #include <initguid.h>
 #include <Usbiodef.h>
