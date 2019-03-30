@@ -8,13 +8,15 @@ Import("env")
 env.Append(CPPPATH=("#include", "#include/WDL"))
 
 sources = [
-	"main.cpp"
+	"main.cpp",
+"mcu.cpp",
+"niMidi.cpp"
 ]
 
 import platform
 import SCons.Script
 os_platform = SCons.Platform.platform_default() 
-Mohave = 14
+osx_mohave = 14
 
 if os_platform == 'win32':
 	libs = ["ws2_32", "winmm"]
@@ -33,7 +35,7 @@ if os_platform == 'darwin':
 	release_str = platform.release() 
 	release_major = int(release_str.split('.')[0])
 
-	if release_major < Mohave:       # High Sierra or earlier
+	if release_major < osx_mohave:       # High Sierra or earlier
 		swellDir = env.Dir("#include/WDL/WDL/swell")	
 		env.Append(CPPPATH=(swellDir,))
 		env["CXX"] = "clang++"

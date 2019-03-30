@@ -22,22 +22,3 @@ if env["PLATFORM"] == "win32":
 		archEnv.SConscript("src/archBuild_sconscript",
 			exports={"env": archEnv},
 			variant_dir="build/%s" % arch, duplicate=False)
-
-	import _winreg
-	# Get the path to makensis.
-	try:
-		with _winreg.OpenKey(_winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\NSIS") as nsisKey:
-			makensis = os.path.join(_winreg.QueryValueEx(nsisKey, None)[0], "makensis.exe")
-	except WindowsError:
-		makensis = "makensis"
-	installer = env.Command("installer/osara_${version}.exe", ["installer/osara.nsi", "build"],
-		[[makensis, "/V2",
-		"/DVERSION=$version", '/DPUBLISHER="$publisher"','/DCOPYRIGHT="$copyright"',
-		"/DOUTFILE=${TARGET.abspath}",
-		"$SOURCE"]])
-
-else: # Mac
-	env["libSuffix"] = ""
-	env.SConscript("src/archBuild_sconscript",
-		exports={"env": env},
-		variant_dir="build", duplicate=False)
