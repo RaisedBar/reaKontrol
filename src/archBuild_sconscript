@@ -11,7 +11,12 @@ sources = [
 	"main.cpp"
 ]
 
-if env["PLATFORM"] == "win32":
+import platform
+import SCons.Script
+os_platform = SCons.Platform.platform_default() 
+Mohave = 14
+
+if os_platform == 'win32':
 	libs = ["ws2_32", "winmm"]
 
 	env.Append(CPPFLAGS="/EHsc")
@@ -24,28 +29,53 @@ if env["PLATFORM"] == "win32":
 		source=sources, LIBS=libs
 	)
 
-else:  # Mac
-	swellDir = env.Dir("#include/WDL/WDL/swell")
-	env.Append(CPPPATH=(swellDir,))
-	env["CXX"] = "clang++"
-	# Build a universal binary with both 32 and 64 bit.
-	archFlags = ("-arch", "i386", "-arch", "x86_64")
-	env.Append(CXXFLAGS=archFlags, LINKFLAGS=archFlags)
-	env.Append(CXXFLAGS=("-stdlib=libc++", "-std=c++11"))
-	# SWELL files.
-	sources.extend(swellDir.File(f) for f in (
-		"swell.cpp", "swell-ini.cpp", "swell-dlg.mm", "swell-gdi.mm",
-		"swell-kb.mm", "swell-misc.mm", "swell-miscdlg.mm", "swell-menu.mm",
-		"swell-wnd.mm", "swell-modstub.mm",
-	))
-	libs = []
-	# OS X frameworks.
-	for f in ("Cocoa", "Carbon", "Appkit"):
-		env.Append(LINKFLAGS=("-framework", f))
-	# We don't want the "lib" prefix for our dylib.
-	env["SHLIBPREFIX"] = ""
+if os_platform == 'darwin':
+	release_str = platform.release() 
+	release_major = int(release_str.split('.')[0])
 
-env.SharedLibrary(
+	if release_major < Mohave:       # High Sierra or earlier
+		swellDir = env.Dir("#include/WDL/WDL/swell")	
+		env.Append(CPPPATH=(swellDir,))
+		env["CXX"] = "clang++"
+		# Build a universal binary with both 32 and 64 bit.
+		archFlags = ("-arch", "i386", "-arch", "x86_64")
+		env.Append(CXXFLAGS=archFlags, LINKFLAGS=archFlags)
+		env.Append(CXXFLAGS=("-stdlib=libc++", "-std=c++11"))
+		# SWELL files.
+		sources.extend(swellDir.File(f) for f in (
+			"swell.cpp", "swell-ini.cpp", "swell-dlg.mm", "swell-gdi.mm",
+			"swell-kb.mm", "swell-misc.mm", "swell-miscdlg.mm", "swell-menu.mm",
+			"swell-wnd.mm", "swell-modstub.mm",
+		))
+		libs = []
+		# OS X frameworks.
+		for f in ("Cocoa", "Carbon", "Appkit"):
+			env.Append(LINKFLAGS=("-framework", f))
+		# We don't want the "lib" prefix for our dylib.
+		env["SHLIBPREFIX"] = ""
+
+	else:       # Mohave or later
+		swellDir = env.Dir("#include/WDL/WDL/swell")	
+		env.Append(CPPPATH=(swellDir,))
+		env["CXX"] = "clang++"
+		# Build a universal binary with both 32 and 64 bit.
+		archFlags = ("-arch", "i386", "-arch", "x86_64")
+		env.Append(CXXFLAGS=archFlags, LINKFLAGS=archFlags)
+		env.Append(CXXFLAGS=("-stdlib=libc++", "-std=c++11"))
+		# SWELL files.
+		sources.extend(swellDir.File(f) for f in (
+			"swell.cpp", "swell-ini.cpp", "swell-dlg.mm", "swell-gdi.mm",
+			"swell-kb.mm", "swell-misc.mm", "swell-miscdlg.mm", "swell-menu.mm",
+			"swell-wnd.mm", "swell-modstub.mm",
+		))
+		libs = []
+		# OS X frameworks.
+		for f in ("Cocoa", "Carbon", "Appkit"):
+			env.Append(LINKFLAGS=("-framework", f))
+		# We don't want the "lib" prefix for our dylib.
+		env["SHLIBPREFIX"] = ""
+
+	env.SharedLibrary(
 	target="reaper_kontrol%s" % env["libSuffix"],
-	source=sources, LIBS=libs,
-)
+		source=sources, LIBS=libs,
+	)
