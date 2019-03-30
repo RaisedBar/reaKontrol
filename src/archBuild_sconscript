@@ -5,8 +5,8 @@
 # License: GNU General Public License version 2.0
 
 Import("env")
-import("platform")
-import("SCons.Script")
+import platform
+import SCons.Script
 
 os_platform = SCons.Platform.platform_default() 
 osx_mohave = 14
