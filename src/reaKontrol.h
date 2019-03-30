@@ -8,7 +8,7 @@
 
 #pragma once
 
-#ifdef _WIN32
+#ifdef _WINDOWS__
 #include <windows.h>
 #endif
 
