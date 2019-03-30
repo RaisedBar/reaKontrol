@@ -6,7 +6,7 @@
  * License: GNU General Public License version 2.0
  */
 
-#ifdef _WIN32
+#ifdef __WINDOWS__
 #include <windows.h>
 #include <SetupAPI.h>
 #include <initguid.h>
@@ -63,7 +63,7 @@ int getKkMidiOutput() {
 }
 
 bool isMk1Connected() {
-#ifdef _WIN32
+#ifdef __WINDOWS__
 	HDEVINFO infoSet = SetupDiGetClassDevsA(&GUID_DEVINTERFACE_USB_DEVICE,
 		nullptr, nullptr, DIGCF_DEVICEINTERFACE | DIGCF_PRESENT);
 	for (DWORD i = 0; i < 256; ++i) {
