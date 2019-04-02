@@ -6,6 +6,13 @@
 
 import os
 import platform
+import SCons.Script
+
+os_platform = SCons.Platform.platform_default() 
+osx_mohave = 18
+release_str = platform.version() 
+release_minor= int(release_str.split('.')[1])
+print( release_str)
 
 vars = Variables()
 vars.Add("version", "The version of this build", "unknown")

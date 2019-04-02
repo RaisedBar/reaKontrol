@@ -12,6 +12,7 @@ os_platform = SCons.Platform.platform_default()
 osx_mohave = 14
 release_str = platform.release() 
 release_major = int(release_str.split('.')[0])
+print( release_major)
 env.Append(CPPPATH=("#include", "#include/WDL"))
 
 sources = [
