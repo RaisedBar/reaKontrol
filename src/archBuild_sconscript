@@ -45,29 +45,11 @@ else:  # Mac
 			print("XCode installation detected on OSX Mohave or later.")
 			env.Append( CPPPATH=[xcode_include_path] )
 		else:   # Check for command-line tools installation
-			swellDir = env.Dir("#include/WDL/WDL/swell")	
-			env.Append(CPPPATH=(swellDir,))
-			env["CXX"] = "clang++"
-			# Build a universal binary with both 32 and 64 bit.
-			archFlags = ("-arch", "i386", "-arch", "x86_64")
-			env.Append(CXXFLAGS=archFlags, LINKFLAGS=archFlags)
-			env.Append(CXXFLAGS=("-stdlib=libc++", "-std=c++11"))
-			# SWELL files.
-			sources.extend(swellDir.File(f) for f in (
-			"swell.cpp", "swell-ini.cpp", "swell-dlg.mm", "swell-gdi.mm",
-			"swell-kb.mm", "swell-misc.mm", "swell-miscdlg.mm", "swell-menu.mm",
-			"swell-wnd.mm", "swell-modstub.mm",
-			))
-			libs = []
-			# OS X frameworks.
-			for f in ("Cocoa", "Carbon", "Appkit"):
-				env.Append(LINKFLAGS=("-framework", f))
-			# We don't want the "lib" prefix for our dylib.
-			env["SHLIBPREFIX"] = ""
-
 			if os.path.isdir( cmd_include_path):    # Command-line tools are installed
 				print( "Command-line tools installation detected on OSX Mohave or later.")
-			env.Append( CPPPATH=[cmd_include_path] )
+				env.Append( CPPPATH=[cmd_include_path] )
+	else:   
+		print( "Building on Mac OSX High Sierra or earlier.")
 
 # Common Mac configuration
 	swellDir = env.Dir("#include/WDL/WDL/swell")	
