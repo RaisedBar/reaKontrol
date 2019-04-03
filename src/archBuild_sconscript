@@ -9,10 +9,10 @@ import platform
 import SCons.Script
 
 os_platform = SCons.Platform.platform_default() 
-osx_mohave = 14
+darwin_mohave = 18  # We have to use the version of the Darwin shell and not the Mac OSX version
 release_str = platform.release() 
 release_major = int(release_str.split('.')[0])
-print( release_major)
+
 env.Append(CPPPATH=("#include", "#include/WDL"))
 
 sources = [
@@ -34,8 +34,8 @@ if os_platform == 'win32':
 		source=sources, LIBS=libs
 	)
 
-else:  # Mac OSX
-	if release_major < osx_mohave:       # High Sierra or earlier
+else:  # Mac
+	if release_major < darwin_mohave:       # High Sierra or earlier
 		swellDir = env.Dir("#include/WDL/WDL/swell")	
 		env.Append(CPPPATH=(swellDir,))
 		env["CXX"] = "clang++"
@@ -57,27 +57,4 @@ else:  # Mac OSX
 		env["SHLIBPREFIX"] = ""
 
 	else:       # Mohave or later
-		swellDir = env.Dir("#include/WDL/WDL/swell")	
-		env.Append(CPPPATH=(swellDir,))
-		env["CXX"] = "clang++"
-		# Build a universal binary with both 32 and 64 bit.
-		archFlags = ("-arch", "i386", "-arch", "x86_64")
-		env.Append(CXXFLAGS=archFlags, LINKFLAGS=archFlags)
-		env.Append(CXXFLAGS=("-stdlib=libc++", "-std=c++11"))
-		# SWELL files.
-		sources.extend(swellDir.File(f) for f in (
-			"swell.cpp", "swell-ini.cpp", "swell-dlg.mm", "swell-gdi.mm",
-			"swell-kb.mm", "swell-misc.mm", "swell-miscdlg.mm", "swell-menu.mm",
-			"swell-wnd.mm", "swell-modstub.mm",
-		))
-		libs = []
-		# OS X frameworks.
-		for f in ("Cocoa", "Carbon", "Appkit"):
-			env.Append(LINKFLAGS=("-framework", f))
-		# We don't want the "lib" prefix for our dylib.
-		env["SHLIBPREFIX"] = ""
-
-	env.SharedLibrary(
-	target="reaper_kontrol%s" % env["libSuffix"],
-		source=sources, LIBS=libs,
-	)
+		print( "Unable to build on Mohave")
